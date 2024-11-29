@@ -23,11 +23,12 @@ def schedule_function(run_time: str, func, *args, **kwargs):
 
     now = datetime.now()
     try:
-        target_time = datetime.strptime(run_time, "%H:%M").replace(year=now.year, month=now.month, day=now.day) - timedelta(seconds=10)
+        target_time = datetime.strptime(run_time, "%H:%M").replace(year=now.year, month=now.month, day=now.day)
 
         delay = (target_time - now).total_seconds()
         threading.Timer(delay, func, args, kwargs).start()
-        print(f"Function scheduled to run at: {target_time}")
+        payload = args[0]
+        print(f"Trade de {payload['ticker_symbol']} para {payload['direction']} de duração {payload['duration_milliseconds']} agendado para rodar em: {target_time}")
     except ValueError:
         print("Invalid time format. Please ensure the time is in HH:mm format.")
 
@@ -36,18 +37,15 @@ async def main():
     print("Conectado ao Telegram!")
     update_credentials()
 
-    chats = [-1002350028496, -1002453860229, -1002385840999, -1001701910837]
+    chats = [-1002350028496, -1002453860229, -1002385840999, -1001701910837, -1001888375197]
 
     @client.on(events.NewMessage(chats=chats))
     async def handler(event):
         """Callback para novas mensagens."""
         message = event.message.message
-        print(f"Nova mensagem em um dos chats: {message}")
         if "Investimento Identificado" in message or "Trade confirmado" in message or "ANÁLISE CONFIRMADA" in message:
-            print("Mensagem de investimento identificada!")
             isOtc = "(OTC)" in message or "OTC" in message
             payload, horario_aposta = get_home_broker_payload_from_fenri_message(message, isOtc)
-            print(f"{payload['ticker_symbol']}; {payload['direction']}; {payload['start_time_utc']}; {payload['duration_milliseconds']}")
             schedule_function(horario_aposta, make_trade, payload)
 
     print("Escutando novas mensagens...")
