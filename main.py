@@ -37,13 +37,13 @@ async def main():
     print("Conectado ao Telegram!")
     update_credentials()
 
-    chats = [-1002350028496, -1002453860229, -1002385840999, -1001701910837, -1001888375197]
+    chats = [-1002350028496, -1002453860229, -1002385840999, -1001701910837, -1001888375197, -1001780905863]
 
     @client.on(events.NewMessage(chats=chats))
     async def handler(event):
         """Callback para novas mensagens."""
         message = event.message.message
-        if "Investimento Identificado" in message or "Trade confirmado" in message or "ANÁLISE CONFIRMADA" in message:
+        if "Investimento Identificado" in message or "Trade confirmado" in message or "ANÁLISE CONFIRMADA" in message or "OPORTUNIDADE ENCONTRADA" in message:
             isOtc = "(OTC)" in message or "OTC" in message
             payload, horario_aposta = get_home_broker_payload_from_fenri_message(message, isOtc)
             schedule_function(horario_aposta, make_trade, payload)
