@@ -32,13 +32,19 @@ def handle_trade_result(trade_id, payload, attempt, bet_amount):
             print(f"Limite de tentativas alcançado para o trade {trade_id}. Encerrando Gale.")
 
 
-
 def make_trade(payload: dict, attempt=1, bet_amount=BASE_BET_AMOUNT):
     payload["bet_value_usd_cents"] = bet_amount
     trade_id, data = make_fenri_trade(payload)
     if trade_id is not None:
         print(f"Trade criado com ID: {trade_id}")
-        threading.Timer(61, handle_trade_result, args=(trade_id, payload, attempt, bet_amount)).start()
+        if payload["duration_milliseconds"] == 60000:
+            add_seconds = 61
+        elif payload["duration_milliseconds"] == 300000:
+            add_seconds = 301
+        else:
+            add_seconds = None
+        if add_seconds is not None:
+            threading.Timer(add_seconds, handle_trade_result, args=(trade_id, payload, attempt, bet_amount)).start()
     else:
         print(f"Erro ao criar trade: {payload['ticker_symbol']}; {payload['direction']}; {payload['start_time_utc']}; {payload['duration_milliseconds']}")
         print(f"error: {data}")
