@@ -48,6 +48,28 @@ home_broker_credentials = {
 bet_value_usd_cents = 100
 account_type = "demo"
 
+
+def get_token():
+    return credentials["token"]
+
+
+def list_trades():
+    res = requests.get("https://trade-api.homebroker.com/op/user/?account_type=demo&page=0&pagesize=30", headers={
+        "Authorization": f'Bearer {get_token()}'
+    })
+    data = res.json()
+    return data
+
+
+def check_trade_status(trade_id):
+    trades = list_trades()
+    trade = next((x for x in trades if x["id"] == trade_id), None)
+    if trade["result"] == "gain":
+        return True
+    return False
+
+
+
 def format_response(response):
     raw_content = response.json()
     json_data = raw_content.strip("```json").strip("```").strip()
@@ -100,10 +122,11 @@ def update_credentials():
 
 
 def make_fenri_trade(payload: dict):
-    if credentials["token"] is None or datetime.now() > credentials["expiration_date"]:
+    token = get_token()
+    if token is None or datetime.now() > credentials["expiration_date"]:
         update_credentials()
     res = requests.post("https://trade-api-edge.homebroker.com/op/",data=json.dumps(payload), headers= {
-        "Authorization": f"Bearer {credentials['token']}"
+        "Authorization": f"Bearer {get_token()}"
     })
     data = res.json()
     if "id" in data:
