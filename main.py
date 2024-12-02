@@ -24,7 +24,7 @@ def handle_trade_result(trade_id, payload, attempt, bet_amount):
         print(f"Trade {trade_id} falhou. Tentativa {attempt + 1} de {MAX_ATTEMPTS}.")
         trade_results[trade_id] = "failure"
         if attempt < MAX_ATTEMPTS:
-            next_bet_amount = bet_amount * attempt
+            next_bet_amount = bet_amount * (attempt + 1)
             payload["start_time_utc"] = datetime.utcnow().isoformat() + "Z"
             print(f"Dobrando o valor da aposta para {next_bet_amount} e tentando novamente.")
             make_trade(payload, attempt + 1, next_bet_amount)
