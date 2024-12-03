@@ -15,19 +15,16 @@ BASE_BET_AMOUNT = 100
 
 def handle_trade_result(trade_id, payload, attempt, bet_amount):
     success = check_trade_status(trade_id)
-    max_attempts = payload["max_attempts"]
     if success:
         print(f"Trade {trade_id} foi bem-sucedido! Retornando ao valor inicial.")
         trade_results[trade_id] = "success"
     else:
-        print(f"Trade {trade_id} falhou. Tentativa {attempt + 1} de {max_attempts}.")
+        print(f"Trade {trade_id} falhou. Tentativa {attempt} de 2.")
         trade_results[trade_id] = "failure"
-        if attempt < max_attempts:
+        if attempt < 2:
             next_bet_amount = bet_amount * (attempt + 1)
-            payload["start_time_utc"] = datetime.utcnow().isoformat() + "Z"
+            payload["start_time_utc"] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S") + ".000Z"
             make_trade(payload, attempt + 1, next_bet_amount)
-        else:
-            print(f"Limite de tentativas alcançado para o trade {trade_id}. Encerrando Gale.")
 
 
 def make_trade(payload: dict, attempt=1, bet_amount=BASE_BET_AMOUNT):
@@ -47,6 +44,7 @@ def make_trade(payload: dict, attempt=1, bet_amount=BASE_BET_AMOUNT):
             threading.Timer(add_seconds, handle_trade_result, args=(trade_id, payload, attempt, bet_amount)).start()
     else:
         print(f"Erro ao criar trade: {payload['ticker_symbol']}; {payload['direction']}; {payload['start_time_utc']}; {payload['duration_milliseconds']}")
+        print(f"actual hour: {datetime.utcnow()}")
         print(f"error: {data}")
 
 
@@ -68,7 +66,7 @@ async def main():
     print("Conectado ao Telegram!")
     update_credentials()
 
-    chats = [-1002350028496, -1002453860229, -1002385840999, -1001701910837, -1001888375197, -1001780905863, -1002085985576, -1002140187627]
+    chats = [-1002453860229, -1002385840999, -1001701910837, -1001888375197, -1001780905863, -1002085985576, -1002140187627]
 
     @client.on(events.NewMessage(chats=chats))
     async def handler(event):
@@ -76,9 +74,7 @@ async def main():
         if "Investimento Identificado" in message or "Trade confirmado" in message or "ANÁLISE CONFIRMADA" in message or "OPORTUNIDADE ENCONTRADA" in message or "ESTRATÉGIA CONFIRMADA" in message or "OPERAÇÃO CONFIRMADA" in message:
             isOtc = "(OTC)" in message or "OTC" in message
             payload, horario_aposta = get_home_broker_payload_from_fenri_message(message, isOtc)
-            max_attempts = 3 if "Investimento Identificado" in message else 2
-            actual_payload = {**payload, "max_attempts": max_attempts}
-            schedule_function(horario_aposta, make_trade, actual_payload)
+            schedule_function(horario_aposta, make_trade, payload)
 
     print("Escutando novas mensagens...")
     await client.run_until_disconnected()
