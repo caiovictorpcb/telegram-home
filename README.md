@@ -1,6 +1,6 @@
-# Telegram Trade Bot  
+# Canais Telegram + HomeBroker Bot  
 
-Este projeto é um bot automatizado para processar mensagens do Telegram relacionadas a oportunidades de trade e executar operações automaticamente em uma plataforma de **Home Broker**. Ele é ideal para automatizar a entrada em operações com base em sinais enviados por grupos de Telegram.  
+Este projeto é um script automatizado para processar mensagens do Telegram relacionadas a oportunidades de trade e executar operações automaticamente na plataforma **Home Broker**. Ele é ideal para automatizar a entrada em operações com base em sinais enviados por grupos de Telegram.  
 
 ---
 
@@ -83,7 +83,7 @@ Contribuições são sempre bem-vindas! Se você encontrou um problema ou tem um
 ---
 
 ## 🙋‍♂️ Autor  
-Desenvolvido por **[Seu Nome]**.  
+Desenvolvido por **[Caio Victor]**.  
 
 ---
 
