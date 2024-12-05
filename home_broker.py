@@ -17,7 +17,7 @@ Você recebe a seguinte mensagem de investimento:
 Extraia as seguintes informações e as insira no formato JSON e retorne apenas os valores:
 - Direção da aposta, se for de venda o valor deve ser "down", se for de compra deve ser "up" (nome do campo: direcao)
 - Duração da aposta em milissegundos (exemplo: 60000) (nome do campo: duracao_aposta_ms)
-- Símbolo do ativo da aposta, se a aposta for direcionada a alguma empresa, preciso do símbolo da ação da empresa (exemplo: A empresa amazon possui o simbolo "AMZN", a empresa Facebook possui o simbolo "META", a empresa Apple possui o simbolo "AAPL", a empresa Google possui o simbolo "GOOG", a empresa Intel possui o simbolo "INTC", a empresa McDonald's possui o simbolo "MC", a empresa Microsoft possui o simbolo "MSFT", a empresa Tesla possui o simbolo "TSLA", a empresa NVIDIA possui o simbolo NVDA) (nome do campo: simbolo_ativo)
+- Símbolo do ativo da aposta, se a aposta for direcionada a alguma empresa, preciso do símbolo da ação da empresa (exemplo: A empresa amazon possui o simbolo "AMZN", a empresa Facebook possui o simbolo "META", a empresa Apple possui o simbolo "AAPL", a empresa Google possui o simbolo "GOOG", a empresa Intel possui o simbolo "INTC", a empresa McDonald's possui o simbolo "MCD", a empresa Microsoft possui o simbolo "MSFT", a empresa Tesla possui o simbolo "TSLA", a empresa NVIDIA possui o simbolo NVDA) (nome do campo: simbolo_ativo)
 - É criptomoeda? (exemplo: True) (nome do campo: is_cripto)
 - Horário de início da entrada (exemplo: 16:15) (nome do campo: horario_inicio_aposta)
 """
@@ -54,7 +54,7 @@ def get_token():
 
 
 def list_trades():
-    res = requests.get("https://trade-api.homebroker.com/op/user/?account_type=demo&page=0&pagesize=30", headers={
+    res = requests.get(f"https://trade-api.homebroker.com/op/user/?account_type={account_type}&page=0&pagesize=30", headers={
         "Authorization": f'Bearer {get_token()}'
     })
     data = res.json()

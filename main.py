@@ -19,9 +19,9 @@ def handle_trade_result(trade_id, payload, attempt, bet_amount):
         print(f"Trade {trade_id} foi bem-sucedido! Retornando ao valor inicial.")
         trade_results[trade_id] = "success"
     else:
-        print(f"Trade {trade_id} falhou. Tentativa {attempt} de 2.")
+        print(f"Trade {trade_id} falhou. Tentativa {attempt} de 3.")
         trade_results[trade_id] = "failure"
-        if attempt < 2:
+        if attempt < 3:
             next_bet_amount = bet_amount * (attempt + 1)
             payload["start_time_utc"] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S") + ".000Z"
             make_trade(payload, attempt + 1, next_bet_amount)
@@ -66,7 +66,7 @@ async def main():
     print("Conectado ao Telegram!")
     update_credentials()
 
-    chats = [-1002453860229, -1002385840999, -1001701910837, -1001888375197, -1001780905863, -1002085985576, -1002140187627]
+    chats = [-1002453860229, -1002385840999, -1001701910837, -1001888375197, -1001780905863, -1002085985576]
 
     @client.on(events.NewMessage(chats=chats))
     async def handler(event):
